@@ -12,28 +12,38 @@ public class Contact {
 
     private @Id @GeneratedValue Long id;
 
-    private String name;
- 
+    private String firstName;
+    private String lastName;
     private String phone;
     private String address;
 
     private String email;
 
     private Contact(){}
-
-	public Contact(String name, String phone, String address, String email) {
-		this.name = name;
+ 
+    public Contact(String firstName, String lastName, String phone, String address, String email) {
+		super();
+		this.firstName = firstName;
+		this.lastName = lastName;
 		this.phone = phone;
 		this.address = address;
 		this.email = email;
 	}
 
-	public String getName() {
-		return name;
+	public String getFirstName() {
+		return firstName;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 
 	public String getPhone() {

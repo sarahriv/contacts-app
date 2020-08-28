@@ -37,8 +37,8 @@ public class ContactsController {
     }
     
     @DeleteMapping("/contacts")
-    void deleteContact(@Valid @RequestBody Contact contact) throws URISyntaxException {
-         contactRepository.delete(contact);
+    void deleteContact(@Valid @RequestBody Long id) throws URISyntaxException {
+         contactRepository.deleteById(id);
     }
     
     @PutMapping("/contacts")
