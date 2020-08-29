@@ -105,7 +105,7 @@ const ContactsTable = (props) =>{
             <td>{contact.phone}</td>
             <td>{contact.address}</td>
             <td>{contact.email}</td>
-            <td><button type="button" onClick={()=>handleDelete(contact.id)}>Delete</button><button type="button" onClick={()=>popUpdate(contact)}</td>
+            <td><button type="button" onClick={()=>handleDelete(contact.id)}>Delete</button></td>
           </tr>
         ))}
       </tbody>
