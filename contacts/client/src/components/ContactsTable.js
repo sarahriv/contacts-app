@@ -57,8 +57,8 @@ const ContactsTable = (props) =>{
 		        window.location.reload();
 		    
 	  };
-	  const handleSave = (contact)=>{
-			
+	  const handleSave = (event,contact,fieldValue)=>{
+		  contact[fieldValue] = event.target.value;
 	        fetch('http://localhost:8080/api/contacts', {
 	            method: "PUT",
 	            headers: {
@@ -71,46 +71,46 @@ const ContactsTable = (props) =>{
 	    
 };
 
+
 	return(
 	  <div className="row">
-	  <div className="col-12">
-	  	<table>
-	  		<thead>
-	  		<tr>
-			  <th><button
-		      type="button" 
-		          onClick={() => requestSort('firstName')}
-		          className={getClassNamesFor('firstName')}
-		        >First name</button></th>
-			  <th><button   type="button"
-		          onClick={() => requestSort('lastName')}
-		      className={getClassNamesFor('lastName')}>Last name</button></th>
-			  <th><button    type="button"
-		          onClick={() => requestSort('phone')}
-		      className={getClassNamesFor('phone')}>Phone</button></th>
-			  <th><button    type="button"
-		          onClick={() => requestSort('address')}
-		      className={getClassNamesFor('address')}>Address</button></th>
-			  <th><button    type="button"
-		          onClick={() => requestSort('email')}
-		      className={getClassNamesFor('email')}>Email</button></th>
-			  <th>Options</th>
-			 </tr>
-			</thead>
-	   <tbody>
-        {items.map(contact => (
-          <tr key={contact.id}>
-            <td>{contact.firstName}</td>
-            <td>{contact.lastName}</td>
-            <td>{contact.phone}</td>
-            <td>{contact.address}</td>
-            <td>{contact.email}</td>
-            <td><button type="button" onClick={()=>handleDelete(contact.id)}>Delete</button></td>
-          </tr>
-        ))}
-      </tbody>
-	  </table>
-	  
+		  <div className="col-12">
+		  	<table>
+		  		<thead>
+		  		<tr>
+				  <th><button
+			      type="button" 
+			          onClick={() => requestSort('firstName')}
+			          className={getClassNamesFor('firstName')}
+			        >First name</button></th>
+				  <th><button   type="button"
+			          onClick={() => requestSort('lastName')}
+			      className={getClassNamesFor('lastName')}>Last name</button></th>
+				  <th><button    type="button"
+			          onClick={() => requestSort('phone')}
+			      className={getClassNamesFor('phone')}>Phone</button></th>
+				  <th><button    type="button"
+			          onClick={() => requestSort('address')}
+			      className={getClassNamesFor('address')}>Address</button></th>
+				  <th><button    type="button"
+			          onClick={() => requestSort('email')}
+			      className={getClassNamesFor('email')}>Email</button></th>
+				  <th>Options</th>
+				 </tr>
+				</thead>
+			   <tbody>
+		        {items.map(contact => (
+		          <tr key={contact.id}>
+		            <td><input defaultValue={contact.firstName} onBlur={e=>handleSave(e,contact,'firstName')}/></td>
+		            <td><input defaultValue={contact.lastName} onBlur={e=>handleSave(e,contact,'lastName')}/></td>
+		            <td><input defaultValue={contact.phone} onBlur={e=>handleSave(e,contact,'phone')}/></td>
+		            <td><input defaultValue={contact.address} onBlur={e=>handleSave(e,contact,'address')}/></td>
+		            <td><input defaultValue={contact.email} onBlur={e=>handleSave(e,contact,'email')}/></td>
+		            <td><button type="button" onClick={()=>handleDelete(contact.id)}>Delete</button></td>
+		           </tr>
+		        ))}
+		      </tbody>
+		  </table>
 	  </div>
 	  </div>
 	
