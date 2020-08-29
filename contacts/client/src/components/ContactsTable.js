@@ -33,6 +33,8 @@ const useSortableData = (items, config = null) => {
 
 	  return { items: sortedItems, requestSort, sortConfig };
 	};
+	
+
 
 const ContactsTable = (props) =>{
 	const { items, requestSort, sortConfig } = useSortableData(props.contacts);
@@ -42,32 +44,59 @@ const ContactsTable = (props) =>{
 	    }
 	    return sortConfig.key === name ? sortConfig.direction : undefined;
 	  };
+	  const handleDelete = (id)=>{
+		
+		        fetch('http://localhost:8080/api/contacts', {
+		            method: "DELETE",
+		            headers: {
+		                "content-type": "application/json",
+		            },
+		            body: JSON.stringify(id),
+		        })
+		        .then(response => response.json());
+		        window.location.reload();
+		    
+	  };
+	  const handleSave = (contact)=>{
+			
+	        fetch('http://localhost:8080/api/contacts', {
+	            method: "PUT",
+	            headers: {
+	                "content-type": "application/json",
+	            },
+	            body: JSON.stringify(contact),
+	        })
+	        .then(response => response.json());
+	        window.location.reload();
+	    
+};
+
 	return(
 	  <div className="row">
 	  <div className="col-12">
-	  <table>
-	  <thead>
-	  <tr>
-	  <th><button
-      type="button"
-          onClick={() => requestSort('firstName')}
-          className={getClassNamesFor('firstName')}
-        >First name</button></th>
-	  <th><button    type="button"
-          onClick={() => requestSort('lastName')}
-      className={getClassNamesFor('lastName')}>Last name</button></th>
-	  <th><button    type="button"
-          onClick={() => requestSort('phone')}
-      className={getClassNamesFor('phone')}>Phone</button></th>
-	  <th><button    type="button"
-          onClick={() => requestSort('address')}
-      className={getClassNamesFor('address')}>Address</button></th>
-	  <th><button    type="button"
-          onClick={() => requestSort('email')}
-      className={getClassNamesFor('email')}>Email</button></th>
-	  <th>Options</th>
-	  </tr>
-	  </thead>
+	  	<table>
+	  		<thead>
+	  		<tr>
+			  <th><button
+		      type="button" 
+		          onClick={() => requestSort('firstName')}
+		          className={getClassNamesFor('firstName')}
+		        >First name</button></th>
+			  <th><button   type="button"
+		          onClick={() => requestSort('lastName')}
+		      className={getClassNamesFor('lastName')}>Last name</button></th>
+			  <th><button    type="button"
+		          onClick={() => requestSort('phone')}
+		      className={getClassNamesFor('phone')}>Phone</button></th>
+			  <th><button    type="button"
+		          onClick={() => requestSort('address')}
+		      className={getClassNamesFor('address')}>Address</button></th>
+			  <th><button    type="button"
+		          onClick={() => requestSort('email')}
+		      className={getClassNamesFor('email')}>Email</button></th>
+			  <th>Options</th>
+			 </tr>
+			</thead>
 	   <tbody>
         {items.map(contact => (
           <tr key={contact.id}>
@@ -76,11 +105,12 @@ const ContactsTable = (props) =>{
             <td>{contact.phone}</td>
             <td>{contact.address}</td>
             <td>{contact.email}</td>
-            <td>Delete</td>
+            <td><button type="button" onClick={()=>handleDelete(contact.id)}>Delete</button><button type="button" onClick={()=>popUpdate(contact)}</td>
           </tr>
         ))}
       </tbody>
 	  </table>
+	  
 	  </div>
 	  </div>
 	
