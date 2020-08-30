@@ -1,118 +1,125 @@
-import React from 'react'
+import React,{Component} from 'react'
 
-const useSortableData = (items, config = null) => {
-	  const [sortConfig, setSortConfig] = React.useState(config);
-
-	  const sortedItems = React.useMemo(() => {
-	    let sortableItems = [...items];
-	    if (sortConfig !== null) {
-	      sortableItems.sort((a, b) => {
-	        if (a[sortConfig.key] < b[sortConfig.key]) {
-	          return sortConfig.direction === 'ascending' ? -1 : 1;
-	        }
-	        if (a[sortConfig.key] > b[sortConfig.key]) {
-	          return sortConfig.direction === 'ascending' ? 1 : -1;
-	        }
-	        return 0;
-	      });
-	    }
-	    return sortableItems;
-	  }, [items, sortConfig]);
-
-	  const requestSort = (key) => {
-	    let direction = 'ascending';
-	    if (
-	      sortConfig &&
-	      sortConfig.key === key &&
-	      sortConfig.direction === 'ascending'
-	    ) {
-	      direction = 'descending';
-	    }
-	    setSortConfig({ key, direction });
-	  };
-
-	  return { items: sortedItems, requestSort, sortConfig };
-	};
+export default class ContactsTable extends Component {
 	
-
-
-const ContactsTable = (props) =>{
-	const { items, requestSort, sortConfig } = useSortableData(props.contacts);
-	  const getClassNamesFor = (name) => {
-	    if (!sortConfig) {
-	      return;
+	  constructor(props){
+	        super(props);
+	        this.state = {
+	            contacts: [],
+	            sortType: 'firstName',
+	            sortDirection: 'ascending',
+	        };
+	        this.handleChange = this.handleChange.bind(this);
 	    }
-	    return sortConfig.key === name ? sortConfig.direction : undefined;
-	  };
-	  const handleDelete = (id)=>{
+	  
+	  componentDidMount(){
+	        fetch('http://localhost:8080/api/contacts')
+	        .then(response=>response.json())
+	        .then(data => this.setState({contacts: data}))
+	    }
+	  
+ requestSort(key){
+	  let direction = 'ascending';
+	  if (this.state.sortType === key && this.state.sortDirection === 'ascending') {
+	    direction = 'descending';
+	  }
+	  this.setState({sortType:key});
+	  this.setState({sortDirection:direction});
+	  let sortedContacts = [...this.state.contacts];
+	  if(this.state.sortType !== null){
+		  
+		  sortedContacts.sort((a, b) => {
+			  if (a[this.state.sortType] < b[this.state.sortType]) {
+				    return this.state.sortDirection === 'ascending' ? -1 : 1;
 		
+			  }
+				  if (a[this.state.sortType] > b[this.state.sortType]) {
+				    return this.state.sortDirection === 'ascending' ? 1 : -1;
+				  }
+				  return 0;
+		  });
+		  }
+	this.setState({contacts:sortedContacts});
+	  }
+  getClassNamesFor(name){
+	  
+	    return this.state.sortType === name ? this.state.sortDirection : undefined;
+	  }
+	 
+		  handleDelete(id){
+			
+			        fetch('http://localhost:8080/api/contacts', {
+			            method: "DELETE",
+			            headers: {
+			                "content-type": "application/json",
+			            },
+			            body: JSON.stringify(id),
+			        })
+			        .then(response => response.json());
+			        window.location.reload();
+			    
+		  }
+		   handleSave(contact){
 		        fetch('http://localhost:8080/api/contacts', {
-		            method: "DELETE",
+		            method: "PUT",
 		            headers: {
 		                "content-type": "application/json",
 		            },
-		            body: JSON.stringify(id),
+		            body: JSON.stringify(contact),
 		        })
 		        .then(response => response.json());
 		        window.location.reload();
 		    
-	  };
-	  const handleSave = (event,contact,fieldValue)=>{
-		  contact[fieldValue] = event.target.value;
-	        fetch('http://localhost:8080/api/contacts', {
-	            method: "PUT",
-	            headers: {
-	                "content-type": "application/json",
-	            },
-	            body: JSON.stringify(contact),
-	        })
-	        .then(response => response.json());
-	        window.location.reload();
-	    
-};
-
-
-	return(
-	  <div className="row">
-		  <div className="col-12">
-		  	<table>
-		  		<thead>
-		  		<tr>
-				  <th><button
-			      type="button" 
-			          onClick={() => requestSort('firstName')}
-			          className={getClassNamesFor('firstName')}
-			        >First name</button></th>
-				  <th><button   type="button"
-			          onClick={() => requestSort('lastName')}
-			      className={getClassNamesFor('lastName')}>Last name</button></th>
-				  <th><button    type="button"
-			          onClick={() => requestSort('phone')}
-			      className={getClassNamesFor('phone')}>Phone</button></th>
-				  <th><button    type="button"
-			          onClick={() => requestSort('address')}
-			      className={getClassNamesFor('address')}>Address</button></th>
-				  <th><button    type="button"
-			          onClick={() => requestSort('email')}
-			      className={getClassNamesFor('email')}>Email</button></th>
-				  <th>Options</th>
-				 </tr>
-				</thead>
-			   <tbody>
-		        {items.map(contact => (
-		          <tr key={contact.id}>
-		            <td><input defaultValue={contact.firstName} onBlur={e=>handleSave(e,contact,'firstName')}/></td>
-		            <td><input defaultValue={contact.lastName} onBlur={e=>handleSave(e,contact,'lastName')}/></td>
-		            <td><input defaultValue={contact.phone} onBlur={e=>handleSave(e,contact,'phone')}/></td>
-		            <td><input defaultValue={contact.address} onBlur={e=>handleSave(e,contact,'address')}/></td>
-		            <td><input defaultValue={contact.email} onBlur={e=>handleSave(e,contact,'email')}/></td>
-		            <td><button type="button" onClick={()=>handleDelete(contact.id)}>Delete</button></td>
-		           </tr>
-		        ))}
-		      </tbody>
-		  </table>
-	  </div>
-	  </div>
+	}
+		   
+	handleChange(event,editedId){
+		const updatedContacts = this.state.contacts.map(contact =>
+        contact.id === editedId ? {...contact, [event.target.name]: event.target.value} : contact
+    );
+		this.setState({contacts:updatedContacts});
+	}
+	render(){return(
+			  <div className="row">
+				  <div className="col-12">
+				  	<table>
+				  		<thead>
+				  		<tr>
+						  <th><button
+					      type="button" 
+					          onClick={() => this.requestSort('firstName')}
+					          className={this.getClassNamesFor('firstName')}
+					        >First name</button></th>
+						  <th><button   type="button"
+					          onClick={() => this.requestSort('lastName')}
+					      className={this.getClassNamesFor('lastName')}>Last name</button></th>
+						  <th><button    type="button"
+					          onClick={() => this.requestSort('phone')}
+					      className={this.getClassNamesFor('phone')}>Phone</button></th>
+						  <th><button    type="button"
+					          onClick={() => this.requestSort('address')}
+					      className={this.getClassNamesFor('address')}>Address</button></th>
+						  <th><button    type="button"
+					          onClick={() => this.requestSort('email')}
+					      className={this.getClassNamesFor('email')}>Email</button></th>
+						  <th>Options</th>
+						 </tr>
+						</thead>
+					   <tbody>
+				        {this.state.contacts.map(contact => (
+				          <tr key={contact.id}>
+				            <td><input value={contact.firstName} name="firstName" onChange={e=>this.handleChange(e,contact.id)}/></td>
+				            <td><input value={contact.lastName} name="lastName" onChange={e=>this.handleChange(e,contact.id)}/></td>
+				            <td><input value={contact.phone} name="phone" onChange={e=>this.handleChange(e,contact.id)}/></td>
+				            <td><input value={contact.address} name="address" onChange={e=>this.handleChange(e,contact.id)}/></td>
+				            <td><input value={contact.email} name="email" onChange={e=>this.handleChange(e,contact.id)}/></td>
+				            <td><button type="button" onClick={()=>this.handleDelete(contact.id)}>Delete</button><button type="button" onClick={()=>this.handleSave(contact)}>Save updates</button></td>
+				           </tr>
+				        ))}
+				      </tbody>
+				  </table>
+			  </div>
+			  </div>
+	)}
 	
-)};
-	export default ContactsTable;	
+}
+
