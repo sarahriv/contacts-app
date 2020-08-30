@@ -1,0 +1,40 @@
+.buttonStyle{
+	background-color:#FF00CC;
+}
+button{
+	padding:2px;
+	margin:2px;
+	border-radius:7px;
+	width:100%;
+}
+
+thead button.ascending::after {
+  content: '(asc)';
+  display: inline-block;
+font-size:x-small;
+}
+
+thead button.descending::after {
+  content: '(desc)️';
+  display: inline-block;
+  font-size:x-small;
+}
+.input-line{
+	margin-top:5px;
+	margin-bottom:5px;
+}
+table{
+	border: solid 1px #FF00CC;
+}
+td{
+	padding:5px;
+	border: solid 1px #FF00CC;
+	
+}
+th{
+	padding:5px;
+	border: solid 1px #FF00CC;	
+}
+.addition{
+	margin-top:1em;
+}
